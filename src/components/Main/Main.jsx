@@ -20,7 +20,7 @@ export default function Main({ onEditAvatar, onEditProfile, onAddPlace, handleCa
         setUserId(user._id);
         setCards(card);
       })
-      .catch((err) => console.log(err));
+      .catch(console.error);
   }, []);
 
   return (
@@ -57,13 +57,13 @@ export default function Main({ onEditAvatar, onEditProfile, onAddPlace, handleCa
         />
       </section>
       <section className="elements" aria-label="Карточки с фотографиями">
-        {cards.map((_, i) => (
+        {cards.map((card) => (
           <Card
-            key={cards[i]._id}
-            name={cards[i].name}
-            link={cards[i].link}
-            ownerId={cards[i].owner._id}
-            likes={cards[i].likes}
+            key={card._id}
+            name={card.name}
+            link={card.link}
+            ownerId={card.owner._id}
+            likes={card.likes}
             userId={userId}
             onCardClick={handleCardClick}
           />

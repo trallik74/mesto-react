@@ -17,26 +17,26 @@ export default function App() {
 
   function handleCardClick(card) {
     setSelectedCard(card);
-    setIsImagePopupOpen((state) => true);
+    setIsImagePopupOpen(true);
   }
 
   function onEditProfile() {
-    setIsEditProfilePopupOpen((state) => true);
+    setIsEditProfilePopupOpen(true);
   }
 
   function onAddPlace() {
-    setIsAddPlacePopupOpen((state) => true);
+    setIsAddPlacePopupOpen(true);
   }
 
   function onEditAvatar() {
-    setIsEditAvatarPopupOpen((state) => true);
+    setIsEditAvatarPopupOpen(true);
   }
 
   function closeAllPopups() {
-    setIsEditProfilePopupOpen((state) => false);
-    setIsAddPlacePopupOpen((state) => false);
-    setIsEditAvatarPopupOpen((state) => false);
-    setIsImagePopupOpen((state) => false);
+    setIsEditProfilePopupOpen(false);
+    setIsAddPlacePopupOpen(false);
+    setIsEditAvatarPopupOpen(false);
+    setIsImagePopupOpen(false);
     setSelectedCard({ name: "#", link: "#" });
   }
 

@@ -1,9 +1,13 @@
-export default function Card(
-  { name, link, userId, likes, ownerId, onCardClick },
-  key
-) {
+export default function Card({
+  name,
+  link,
+  userId,
+  likes,
+  ownerId,
+  onCardClick,
+}) {
   return (
-    <article className="element" key={key}>
+    <article className="element">
       {ownerId === userId && (
         <button
           className="element__delete-button"
@@ -11,9 +15,14 @@ export default function Card(
           aria-label="Кнопка удаления"
         />
       )}
-      <img className="element__image" alt={name} src={link} onClick={() => {
-        onCardClick({name, link})
-      }}/>
+      <img
+        className="element__image"
+        alt={name}
+        src={link}
+        onClick={() => {
+          onCardClick({ name, link });
+        }}
+      />
       <div className="element__description">
         <h2 className="element__title">{name}</h2>
         <div className="element__like-area">
