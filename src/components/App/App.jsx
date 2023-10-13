@@ -38,7 +38,21 @@ export default function App() {
       .then((user) => {
         setCurrentUser(user);
       })
-      .then(closeAllPopups())
+      .then(() => {
+        closeAllPopups();
+      })
+      .catch(console.error);
+  }
+
+  function handleUpdateAvatar({ avatar }) {
+    api
+      .changeAvatar(avatar)
+      .then((user) => {
+        setCurrentUser(user);
+      })
+      .then(() => {
+        closeAllPopups();
+      })
       .catch(console.error);
   }
 
@@ -105,6 +119,7 @@ export default function App() {
         <ChangeAvatarPopup
           isOpen={isEditAvatarPopupOpen}
           onClose={closeAllPopups}
+          onUpdateAvatar={handleUpdateAvatar}
         />
         <ConfirmPopup />
         <ImagePopup
