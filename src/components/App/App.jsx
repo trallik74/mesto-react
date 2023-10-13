@@ -17,10 +17,24 @@ export default function App() {
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
   const [selectedCard, setSelectedCard] = useState({ name: "#", link: "#" });
+  const [cards, setCards] = useState([]);
 
   function handleCardClick(card) {
     setSelectedCard(card);
     setIsImagePopupOpen(true);
+  }
+
+  function handleCardLike(card) {
+    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
+      setCards((state) => state.map((c) => (c._id === card._id ? newCard : c)));
+    });
+  }
+
+  function handleCardDelete(card) {
+    api.deleteCard(card._id).then(() => {
+      setCards((state) => state.filter((c) => c._id !== card._id));
+    });
   }
 
   function onEditProfile() {
@@ -44,10 +58,10 @@ export default function App() {
   }
 
   useEffect(() => {
-    api
-      .getUserInfo()
-      .then((user) => {
+    Promise.all([api.getUserInfo(), api.getCardsList()])
+      .then(([user, card]) => {
         setCurrentUser(user);
+        setCards(card);
       })
       .catch(console.error);
   }, []);
@@ -58,10 +72,13 @@ export default function App() {
         <div className="page__content">
           <Header />
           <Main
+            cards={cards}
             onEditProfile={onEditProfile}
             onAddPlace={onAddPlace}
             onEditAvatar={onEditAvatar}
             handleCardClick={handleCardClick}
+            handleCardLike={handleCardLike}
+            handleCardDelete={handleCardDelete}
           />
           <Footer />
         </div>

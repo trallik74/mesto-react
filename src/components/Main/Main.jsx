@@ -1,25 +1,17 @@
-import { useContext, useEffect, useState } from "react";
-import { api } from "../../utils/api";
+import { useContext } from "react";
 import Card from "../Card/Card";
 import { CurrentUserContext } from "../../context/CurrentUserContext";
 
 export default function Main({
+  cards,
   onEditAvatar,
   onEditProfile,
   onAddPlace,
   handleCardClick,
+  handleCardLike,
+  handleCardDelete,
 }) {
-  const [cards, setCards] = useState([]);
   const currentUser = useContext(CurrentUserContext);
-
-  useEffect(() => {
-    api
-      .getAllCards()
-      .then((card) => {
-        setCards(card);
-      })
-      .catch(console.error);
-  }, []);
 
   return (
     <main className="main">
@@ -58,11 +50,10 @@ export default function Main({
         {cards.map((card) => (
           <Card
             key={card._id}
-            name={card.name}
-            link={card.link}
-            ownerId={card.owner._id}
-            likes={card.likes}
+            card={card}
             onCardClick={handleCardClick}
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}
           />
         ))}
       </section>

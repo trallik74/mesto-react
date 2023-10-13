@@ -1,6 +1,7 @@
 import PopupWithForm from "../PopupWithForm/PopupWithForm";
 
 export default function ChangeAvatarPopup({ isOpen, onClose }) {
+
   return (
     <PopupWithForm
       name={"avatar-change"}
