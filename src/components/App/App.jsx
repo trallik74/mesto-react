@@ -15,9 +15,32 @@ export default function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState({});
+  const [currentUser, setCurrentUser] = useState({
+    name: "",
+    about: "",
+    avatar: "",
+  });
   const [selectedCard, setSelectedCard] = useState({ name: "#", link: "#" });
   const [cards, setCards] = useState([]);
+
+  useEffect(() => {
+    Promise.all([api.getUserInfo(), api.getCardsList()])
+      .then(([user, card]) => {
+        setCurrentUser(user);
+        setCards(card);
+      })
+      .catch(console.error);
+  }, []);
+
+  function handleUpdateUser({ name, about }) {
+    api
+      .updateUserInfo({ name, about })
+      .then((user) => {
+        setCurrentUser(user);
+      })
+      .then(closeAllPopups())
+      .catch(console.error);
+  }
 
   function handleCardClick(card) {
     setSelectedCard(card);
@@ -54,17 +77,7 @@ export default function App() {
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setIsImagePopupOpen(false);
-    setSelectedCard({ name: "#", link: "#" });
   }
-
-  useEffect(() => {
-    Promise.all([api.getUserInfo(), api.getCardsList()])
-      .then(([user, card]) => {
-        setCurrentUser(user);
-        setCards(card);
-      })
-      .catch(console.error);
-  }, []);
 
   return (
     <>
@@ -86,6 +99,7 @@ export default function App() {
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
+          onUpdateUser={handleUpdateUser}
         />
         <AddCardPopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} />
         <ChangeAvatarPopup
