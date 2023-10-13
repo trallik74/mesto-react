@@ -1,14 +1,22 @@
+import { useContext } from "react";
+import { CurrentUserContext } from "../../context/CurrentUserContext";
+
+
 export default function Card({
   name,
   link,
-  userId,
   likes,
   ownerId,
   onCardClick,
 }) {
+  const currentUser = useContext(CurrentUserContext);
+  const isOwn = ownerId === currentUser._id;
+  const isLiked = likes.some(i => i._id === currentUser._id);
+  const cardLikeButtonClassName = (isLiked ? 'element__like-button element__like-button_active' : 'element__like-button');
+
   return (
     <article className="element">
-      {ownerId === userId && (
+      {isOwn && (
         <button
           className="element__delete-button"
           type="button"
@@ -27,7 +35,7 @@ export default function Card({
         <h2 className="element__title">{name}</h2>
         <div className="element__like-area">
           <button
-            className="element__like-button"
+            className={cardLikeButtonClassName}
             type="button"
             aria-label="Кнопка оценить"
           />

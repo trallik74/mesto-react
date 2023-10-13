@@ -1,23 +1,21 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { api } from "../../utils/api";
 import Card from "../Card/Card";
+import { CurrentUserContext } from "../../context/CurrentUserContext";
 
-export default function Main({ onEditAvatar, onEditProfile, onAddPlace, handleCardClick}) {
-  const [userName, setUsername] = useState("unknown");
-  const [userDescription, setUserDescription] = useState("unknown");
-  const [userAvatar, setUserAvatar] = useState(
-    "https://pictures.s3.yandex.net/frontend-developer/common/ava.jpg"
-  );
+export default function Main({
+  onEditAvatar,
+  onEditProfile,
+  onAddPlace,
+  handleCardClick,
+}) {
   const [cards, setCards] = useState([]);
-  const [userId, setUserId] = useState("");
+  const currentUser = useContext(CurrentUserContext);
 
   useEffect(() => {
-    Promise.all([api.getUserInfo(), api.getAllCards()])
-      .then(([user, card]) => {
-        setUsername(user.name);
-        setUserDescription(user.about);
-        setUserAvatar(user.avatar);
-        setUserId(user._id);
+    api
+      .getAllCards()
+      .then((card) => {
         setCards(card);
       })
       .catch(console.error);
@@ -30,7 +28,7 @@ export default function Main({ onEditAvatar, onEditProfile, onAddPlace, handleCa
           <img
             className="profile__avatar"
             alt="Аватар профиля"
-            src={userAvatar}
+            src={currentUser.avatar}
           />
           <button
             className="profile__edit-avatar"
@@ -40,14 +38,14 @@ export default function Main({ onEditAvatar, onEditProfile, onAddPlace, handleCa
           />
         </div>
         <div className="profile__info">
-          <h1 className="profile__title">{userName}</h1>
+          <h1 className="profile__title">{currentUser.name}</h1>
           <button
             className="profile__edit-button"
             type="button"
             aria-label="Кнопка изменения профиля"
             onClick={onEditProfile}
           />
-          <p className="profile__subtitle">{userDescription}</p>
+          <p className="profile__subtitle">{currentUser.about}</p>
         </div>
         <button
           className="profile__add-button"
@@ -64,7 +62,6 @@ export default function Main({ onEditAvatar, onEditProfile, onAddPlace, handleCa
             link={card.link}
             ownerId={card.owner._id}
             likes={card.likes}
-            userId={userId}
             onCardClick={handleCardClick}
           />
         ))}
