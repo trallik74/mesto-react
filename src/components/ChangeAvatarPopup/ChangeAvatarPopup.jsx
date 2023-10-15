@@ -1,20 +1,20 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import PopupWithForm from "../PopupWithForm/PopupWithForm";
 
 export default function ChangeAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
   const inputRef = useRef();
+
+  useEffect(() => {
+    if (isOpen) {
+      inputRef.current.value = "";
+    }
+  }, [isOpen]);
 
   function handleSubmit(evt) {
     evt.preventDefault();
     onUpdateAvatar({
       avatar: inputRef.current.value,
     });
-    inputRef.current.value = "";
-  }
-
-  function handleClose() {
-    onClose();
-    inputRef.current.value = "";
   }
 
   return (
@@ -23,7 +23,7 @@ export default function ChangeAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
       title={"Обновить аватар"}
       buttonText={"Сохранить"}
       isOpen={isOpen}
-      onClose={handleClose}
+      onClose={onClose}
       onSubmit={handleSubmit}
     >
       <input

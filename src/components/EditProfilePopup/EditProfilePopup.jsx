@@ -8,9 +8,11 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
   const currentUser = useContext(CurrentUserContext);
 
   useEffect(() => {
-    setName(currentUser.name);
-    setDescription(currentUser.about);
-  }, [currentUser]);
+    if (isOpen) {
+      setName(currentUser.name);
+      setDescription(currentUser.about);
+    }
+  }, [currentUser, isOpen]);
 
   function handleSubmit(evt) {
     evt.preventDefault();
@@ -18,12 +20,6 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
       name,
       about: description,
     });
-  }
-
-  function handleClose() {
-    setName(currentUser.name);
-    setDescription(currentUser.about);
-    onClose();
   }
 
   function handleInputChange(evt) {
@@ -40,7 +36,7 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
       title={"Редактировать профиль"}
       buttonText={"Сохранить"}
       isOpen={isOpen}
-      onClose={handleClose}
+      onClose={onClose}
       onSubmit={handleSubmit}
     >
       <input

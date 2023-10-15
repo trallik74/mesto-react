@@ -1,3 +1,7 @@
+import { useContext } from "react";
+import Loader from "../Loader/Loader";
+import { IsLoadingContext } from "../../context/IsLoadingContext";
+
 export default function PopupWithForm({
   name,
   title,
@@ -5,8 +9,15 @@ export default function PopupWithForm({
   isOpen,
   onClose,
   children,
-  onSubmit
+  onSubmit,
 }) {
+  const [isLoading, setIsLoading] = useContext(IsLoadingContext);
+
+  function handleSubmit(evt) {
+    setIsLoading(true);
+    onSubmit(evt)
+  }
+
   return (
     <div
       className={
@@ -24,13 +35,13 @@ export default function PopupWithForm({
           onClick={onClose}
         />
         <h2 className="popup__title">{title}</h2>
-        <form className="popup__form" name={`${name}-form`} onSubmit={onSubmit}>
+        <form className="popup__form" name={`${name}-form`} onSubmit={handleSubmit}>
           {children}
           <button
             className="popup__button popup__button_type_submit"
             type="submit"
           >
-            {buttonText}
+            {isLoading ? <Loader /> : buttonText}
           </button>
         </form>
       </div>
