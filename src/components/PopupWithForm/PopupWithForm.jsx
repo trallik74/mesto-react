@@ -8,14 +8,15 @@ export default function PopupWithForm({
   buttonText,
   isOpen,
   onClose,
-  children,
   onSubmit,
+  children,
+  isEnabled,
 }) {
   const [isLoading, setIsLoading] = useContext(IsLoadingContext);
 
   function handleSubmit(evt) {
     setIsLoading(true);
-    onSubmit(evt)
+    onSubmit(evt);
   }
 
   return (
@@ -35,11 +36,21 @@ export default function PopupWithForm({
           onClick={onClose}
         />
         <h2 className="popup__title">{title}</h2>
-        <form className="popup__form" name={`${name}-form`} onSubmit={handleSubmit}>
+        <form
+          className="popup__form"
+          name={`${name}-form`}
+          onSubmit={handleSubmit}
+          noValidate
+        >
           {children}
           <button
-            className="popup__button popup__button_type_submit"
+            className={
+              isEnabled
+                ? "popup__button popup__button_type_submit"
+                : "popup__button popup__button_type_submit popup__button_disabled"
+            }
             type="submit"
+            disabled={!isEnabled}
           >
             {isLoading ? <Loader /> : buttonText}
           </button>

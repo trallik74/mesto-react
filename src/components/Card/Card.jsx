@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { CurrentUserContext } from "../../context/CurrentUserContext";
 
 export default function Card({
@@ -8,6 +8,7 @@ export default function Card({
   onCardDeleteClick,
 }) {
   const currentUser = useContext(CurrentUserContext);
+  const [isErrorLink, setIsErrorLink] = useState(false);
   const isOwn = card.owner._id === currentUser._id;
   const isLiked = card.likes.some((i) => i._id === currentUser._id);
   const cardLikeButtonClassName = isLiked
@@ -37,7 +38,17 @@ export default function Card({
         alt={card.name}
         src={card.link}
         onClick={() => {
-          onCardClick({ name: card.name, link: card.link });
+          if (isErrorLink) {
+            return;
+          } else {
+            onCardClick({ name: card.name, link: card.link });
+          }
+        }}
+        onError={(evt) => {
+          setIsErrorLink(true);
+          evt.currentTarget.onerror = null;
+          evt.currentTarget.src =
+            "https://placehold.co/282x282?text=Ошибка+при+загрузке+изображения&font=roboto";
         }}
       />
       <div className="element__description">

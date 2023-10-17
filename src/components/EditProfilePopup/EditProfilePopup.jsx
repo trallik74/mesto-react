@@ -1,33 +1,49 @@
 import { useState, useEffect, useContext } from "react";
 import PopupWithForm from "../PopupWithForm/PopupWithForm";
 import { CurrentUserContext } from "../../context/CurrentUserContext";
+import useValidation from "../useValidation";
 
 export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [values, setValues] = useState({
+    "edit-title-input": "",
+    "edit-subtitle-input": "",
+  });
   const currentUser = useContext(CurrentUserContext);
+  const nameValidation = useValidation({
+    value: values["edit-title-input"],
+    validator: { type: "text", required: true, minLength: 2, maxLength: 30 },
+  });
+  const aboutValidation = useValidation({
+    value: values["edit-subtitle-input"],
+    validator: { type: "text", required: true, minLength: 2, maxLength: 200 },
+  });
+  const isFormEnabled =
+    !(nameValidation.isInputReseted && aboutValidation.isInputReseted) &&
+    nameValidation.isValid &&
+    aboutValidation.isValid;
 
   useEffect(() => {
     if (isOpen) {
-      setName(currentUser.name);
-      setDescription(currentUser.about);
+      setValues((values) => ({
+        ...values,
+        "edit-title-input": currentUser.name,
+        "edit-subtitle-input": currentUser.about,
+      }));
+      nameValidation.setIsInputReseted(true);
+      aboutValidation.setIsInputReseted(true);
     }
   }, [currentUser, isOpen]);
 
   function handleSubmit(evt) {
     evt.preventDefault();
     onUpdateUser({
-      name,
-      about: description,
+      name: values["edit-title-input"],
+      about: values["edit-subtitle-input"],
     });
   }
 
   function handleInputChange(evt) {
-    if (evt.target.id === "name") {
-      setName(evt.target.value);
-    } else if (evt.target.id === "about") {
-      setDescription(evt.target.value);
-    }
+    setValues((values) => ({ ...values, [evt.target.name]: evt.target.value }));
   }
 
   return (
@@ -38,33 +54,50 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
+      isEnabled={isFormEnabled}
     >
       <input
         id="name"
-        className="popup__input popup__input_type_title"
+        className={
+          nameValidation.isInputReseted
+            ? "popup__input popup__input_type_title"
+            : nameValidation.isValid
+            ? "popup__input popup__input_type_title popup__input_type_correct"
+            : "popup__input popup__input_type_title popup__input_type_error"
+        }
         placeholder="Имя"
         type="text"
         name="edit-title-input"
-        minLength="2"
-        maxLength="40"
-        required
-        value={name}
-        onChange={handleInputChange}
+        value={values["edit-title-input"]}
+        onChange={(evt) => {
+          handleInputChange(evt);
+          nameValidation.setIsInputReseted(false);
+        }}
       />
-      <span className="name-error popup__input-error"></span>
+      <span className="name-error popup__input-error">
+        {nameValidation.errorMesage}
+      </span>
       <input
         id="about"
-        className="popup__input popup__input_type_subtitle"
+        className={
+          aboutValidation.isInputReseted
+            ? "popup__input popup__input_type_subtitle"
+            : aboutValidation.isValid
+            ? "popup__input popup__input_type_subtitle popup__input_type_correct"
+            : "popup__input popup__input_type_subtitle popup__input_type_error"
+        }
         placeholder="О себе"
         type="text"
         name="edit-subtitle-input"
-        minLength="2"
-        maxLength="200"
-        required
-        value={description}
-        onChange={handleInputChange}
+        value={values["edit-subtitle-input"]}
+        onChange={(evt) => {
+          handleInputChange(evt);
+          aboutValidation.setIsInputReseted(false);
+        }}
       />
-      <span className="about-error popup__input-error"></span>
+      <span className="about-error popup__input-error">
+        {aboutValidation.errorMesage}
+      </span>
     </PopupWithForm>
   );
 }

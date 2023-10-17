@@ -1,9 +1,15 @@
 import PopupWithForm from "../PopupWithForm/PopupWithForm";
 
-export default function ConfirmPopup({ isOpen, onClose, card, onCardDelete }) {
+export default function ConfirmPopup({
+  isOpen,
+  onClose,
+  selectedCard,
+  onCardDelete,
+}) {
   function handleSubmit(evt) {
     evt.preventDefault();
-    onCardDelete(card);
+    onCardDelete(selectedCard);
+
   }
 
   return (
@@ -13,8 +19,8 @@ export default function ConfirmPopup({ isOpen, onClose, card, onCardDelete }) {
       buttonText={"Да"}
       isOpen={isOpen}
       onClose={onClose}
-      card={card}
       onSubmit={handleSubmit}
+      isEnabled={true}
     />
   );
 }

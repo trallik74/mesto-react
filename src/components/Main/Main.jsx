@@ -1,9 +1,11 @@
 import { useContext } from "react";
 import Card from "../Card/Card";
 import { CurrentUserContext } from "../../context/CurrentUserContext";
+import Skeleton from "../Skeleton/Skeleton";
 
 export default function Main({
   cards,
+  isRender,
   onEditAvatar,
   onEditProfile,
   onAddPlace,
@@ -17,11 +19,15 @@ export default function Main({
     <main className="main">
       <section className="profile">
         <div className="profile__avatar-container">
-          <img
-            className="profile__avatar"
-            alt="Аватар профиля"
-            src={currentUser.avatar}
-          />
+          {isRender ? (
+            <img
+              className="profile__avatar"
+              alt="Аватар профиля"
+              src={currentUser.avatar}
+            />
+          ) : (
+            <Skeleton element={"avatar"} />
+          )}
           <button
             className="profile__edit-avatar"
             type="button"
@@ -30,14 +36,22 @@ export default function Main({
           />
         </div>
         <div className="profile__info">
-          <h1 className="profile__title">{currentUser.name}</h1>
+          {isRender ? (
+            <h1 className="profile__title">{currentUser.name}</h1>
+          ) : (
+            <Skeleton element={"title"} />
+          )}
           <button
             className="profile__edit-button"
             type="button"
             aria-label="Кнопка изменения профиля"
             onClick={onEditProfile}
           />
-          <p className="profile__subtitle">{currentUser.about}</p>
+          {isRender ? (
+            <p className="profile__subtitle">{currentUser.about}</p>
+          ) : (
+            <Skeleton element={"subtitle"} />
+          )}
         </div>
         <button
           className="profile__add-button"
@@ -47,15 +61,19 @@ export default function Main({
         />
       </section>
       <section className="elements" aria-label="Карточки с фотографиями">
-        {cards.map((card) => (
-          <Card
-            key={card._id}
-            card={card}
-            onCardClick={handleCardClick}
-            onCardLike={onCardLike}
-            onCardDeleteClick={onConfirm}
-          />
-        ))}
+        {isRender ? (
+          cards.map((card) => (
+            <Card
+              key={card._id}
+              card={card}
+              onCardClick={handleCardClick}
+              onCardLike={onCardLike}
+              onCardDeleteClick={onConfirm}
+            />
+          ))
+        ) : (
+          <Skeleton element={"cards"} />
+        )}
       </section>
     </main>
   );

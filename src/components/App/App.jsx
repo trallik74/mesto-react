@@ -18,15 +18,16 @@ export default function App() {
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRender, setIsRender] = useState(false);
   const [currentUser, setCurrentUser] = useState({
-    name: "",
-    about: "",
-    avatar: "",
+    name: "Пользователь",
+    about: "Описание",
+    avatar: "https://pictures.s3.yandex.net/frontend-developer/common/ava.jpg",
   });
   const [selectedCard, setSelectedCard] = useState({
-    name: "#",
-    link: "#",
-    id: "#",
+    name: "",
+    link: "",
+    id: "",
   });
   const [cards, setCards] = useState([]);
 
@@ -36,7 +37,10 @@ export default function App() {
         setCurrentUser(user);
         setCards(card);
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => {
+        setIsRender(true);
+      });
   }, []);
 
   function handleUpdateUser({ name, about }) {
@@ -148,6 +152,7 @@ export default function App() {
           <Header />
           <Main
             cards={cards}
+            isRender={isRender}
             onEditProfile={onEditProfile}
             onAddPlace={onAddPlace}
             onEditAvatar={onEditAvatar}
@@ -176,7 +181,7 @@ export default function App() {
           <ConfirmPopup
             isOpen={isConfirmPopupOpen}
             onClose={closeAllPopups}
-            card={selectedCard}
+            selectedCard={selectedCard}
             onCardDelete={handleCardDelete}
           />
         </IsLoadingContext.Provider>

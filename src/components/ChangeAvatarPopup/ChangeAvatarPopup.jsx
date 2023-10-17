@@ -1,12 +1,19 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import PopupWithForm from "../PopupWithForm/PopupWithForm";
+import useValidation from "../useValidation";
 
 export default function ChangeAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
   const inputRef = useRef();
+  const [urlValue, setUrlValue] = useState("");
+  const urlValidation = useValidation({
+    value: urlValue,
+    validator: { type: "url", required: true },
+  });
 
   useEffect(() => {
     if (isOpen) {
       inputRef.current.value = "";
+      urlValidation.setIsInputReseted(true);
     }
   }, [isOpen]);
 
@@ -17,6 +24,11 @@ export default function ChangeAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
     });
   }
 
+  function handleValidation() {
+    setUrlValue(inputRef.current.value);
+    urlValidation.setIsInputReseted(false);
+  }
+
   return (
     <PopupWithForm
       name={"avatar-change"}
@@ -25,6 +37,7 @@ export default function ChangeAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
+      isEnabled={!urlValidation.isInputReseted && urlValidation.isValid}
     >
       <input
         id="avatar-url"
@@ -33,9 +46,11 @@ export default function ChangeAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
         placeholder="Ссылка на картинку"
         name="avatar-url-input"
         ref={inputRef}
-        required
+        onChange={handleValidation}
       />
-      <span className="avatar-url-error popup__input-error"></span>
+      <span className="avatar-url-error popup__input-error">
+        {!urlValidation.isInputReseted && urlValidation.errorMesage}
+      </span>
     </PopupWithForm>
   );
 }

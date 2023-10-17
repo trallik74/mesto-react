@@ -3,4 +3,6 @@
  border-radius: 10px;
  overflow: hidden;
  position: relative;
+ max-width: 282px;
+ width: 100%;
 }
