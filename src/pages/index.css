@@ -49,3 +49,5 @@
 @import url(../blocks/profile/__title/_type/profile__title_type_skeleton.css);
 @import url(../blocks/profile/__subtitle/_type/profile__subtitle_type_skeleton.css);
 @import url(../blocks/element/_type/element_type_skeleton.css);
+@import url(../blocks/hidden/hidden.css);
+@import url(../blocks/skeleton-animation/skeleton-animation.css);

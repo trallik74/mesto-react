@@ -29,7 +29,9 @@ export default function Main({
             <Skeleton element={"avatar"} />
           )}
           <button
-            className="profile__edit-avatar"
+            className={
+              isRender ? "profile__edit-avatar" : "profile__edit-avatar hidden"
+            }
             type="button"
             aria-label="Кнопка изменения аватара"
             onClick={onEditAvatar}
@@ -42,7 +44,9 @@ export default function Main({
             <Skeleton element={"title"} />
           )}
           <button
-            className="profile__edit-button"
+            className={
+              isRender ? "profile__edit-button" : "profile__edit-button hidden"
+            }
             type="button"
             aria-label="Кнопка изменения профиля"
             onClick={onEditProfile}
@@ -54,7 +58,9 @@ export default function Main({
           )}
         </div>
         <button
-          className="profile__add-button"
+          className={
+            isRender ? "profile__add-button" : "profile__add-button hidden"
+          }
           type="button"
           aria-label="Кнопка добавления карточки"
           onClick={onAddPlace}
