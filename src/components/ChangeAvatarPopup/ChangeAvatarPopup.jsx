@@ -41,7 +41,13 @@ export default function ChangeAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
     >
       <input
         id="avatar-url"
-        className="popup__input popup__input_type_url"
+        className={
+          urlValidation.isInputReseted
+            ? "popup__input popup__input_type_url"
+            : urlValidation.isValid
+            ? "popup__input popup__input_type_url popup__input_type_correct"
+            : "popup__input popup__input_type_url popup__input_type_error"
+        }
         type="url"
         placeholder="Ссылка на картинку"
         name="avatar-url-input"

@@ -36,6 +36,8 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
 
   function handleSubmit(evt) {
     evt.preventDefault();
+    nameValidation.setIsInputReseted(false);
+    aboutValidation.setIsInputReseted(false);
     onUpdateUser({
       name: values["edit-title-input"],
       about: values["edit-subtitle-input"],
