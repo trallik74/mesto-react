@@ -73,6 +73,7 @@ export default function AddCardPopup({ isOpen, onClose, onAddPlaceSubmit }) {
           titleValidation.setIsInputReseted(false);
           handleInputChange(evt);
         }}
+        maxLength={titleValidation.MaxLength}
       />
       <span className="title-error popup__input-error">
         {!titleValidation.isInputReseted && titleValidation.errorMesage}

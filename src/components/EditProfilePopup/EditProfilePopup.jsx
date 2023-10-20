@@ -77,6 +77,7 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
           handleInputChange(evt);
           nameValidation.setIsInputReseted(false);
         }}
+        maxLength={nameValidation.MaxLength}
       />
       <span className="name-error popup__input-error">
         {nameValidation.errorMesage}
@@ -98,6 +99,7 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
           handleInputChange(evt);
           aboutValidation.setIsInputReseted(false);
         }}
+        maxLength={aboutValidation.MaxLength}
       />
       <span className="about-error popup__input-error">
         {aboutValidation.errorMesage}

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 
 export default function useValidation({ value, type, required }) {
   const [errorMesage, setErrorMesage] = useState("");
@@ -13,25 +13,15 @@ export default function useValidation({ value, type, required }) {
     "short-text": { minLength: 2, maxLength: 30 },
   };
 
-  const checkIsEmpty = useCallback(() => {
+  function checkIsEmpty() {
     if (required && !value.length) {
       setErrorMesage("Это поле обязательно для заполнения");
       return false;
     }
     return true;
-  }, [value]);
+  }
 
-  const checkMaxLength = useCallback(() => {
-    if (value.length > validator[type].maxLength) {
-      setErrorMesage(
-        `Максимальное количество символов: ${validator[type].maxLength}. Сейчас: ${value.length}.`
-      );
-      return false;
-    }
-    return true;
-  }, [value]);
-
-  const checkMinLength = useCallback(() => {
+  function checkMinLength() {
     if (!!value.length && value.length < validator[type].minLength) {
       setErrorMesage(
         `Минимальное количество символов: ${validator[type].minLength}. Сейчас: ${value.length}.`
@@ -39,19 +29,19 @@ export default function useValidation({ value, type, required }) {
       return false;
     }
     return true;
-  }, [value]);
+  }
 
-  const checkUrl = useCallback(() => {
+  function checkUrl() {
     if (!!value.length && !value.match(validator[type].urlRegex)) {
       setErrorMesage("Введите валидный url-адрес.");
       return false;
     }
     return true;
-  }, [value]);
+  }
 
   useEffect(() => {
     if (type === "long-text" || type === "short-text") {
-      if (checkIsEmpty() && checkMinLength() && checkMaxLength()) {
+      if (checkIsEmpty() && checkMinLength()) {
         setIsValid(true);
         setErrorMesage("");
       } else {
@@ -72,6 +62,7 @@ export default function useValidation({ value, type, required }) {
   return {
     isValid,
     errorMesage,
+    MaxLength: validator[type].maxLength,
     setIsInputReseted,
     isInputReseted,
   };
