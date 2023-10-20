@@ -8,8 +8,10 @@ import ConfirmPopup from "../ConfirmPopup/СonfirmPopup";
 import ImagePopup from "../ImagePopup/ImagePopup";
 import { useEffect, useState } from "react";
 import { api } from "../../utils/api";
+import errorHandler from "../../utils/errorHandler";
 import { CurrentUserContext } from "../../context/CurrentUserContext";
 import { IsLoadingContext } from "../../context/IsLoadingContext";
+import UpdateDataNotification from "../UpdateDataNotification/UpdateDataNotification";
 
 export default function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -17,6 +19,12 @@ export default function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [notificationSettings, setNotificationSettings] = useState({
+    correct: true,
+    message: "Успешно",
+  });
+  const [timerId, setTimerId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRender, setIsRender] = useState(false);
   const [currentUser, setCurrentUser] = useState({
@@ -37,7 +45,10 @@ export default function App() {
         setCurrentUser(user);
         setCards(card);
       })
-      .catch(console.error)
+      .catch(err => {
+        console.log(err);
+        handleNotification({ message: 'При загрузке произошла ошибка. ' + errorHandler(err), isCorrect: false });
+      })
       .finally(() => {
         setIsRender(true);
       });
@@ -47,12 +58,16 @@ export default function App() {
     api
       .updateUserInfo({ name, about })
       .then((user) => {
+        handleNotification({ message: "Информация о пользователе обновлена", isCorrect: true });
         setCurrentUser(user);
       })
       .then(() => {
         closeAllPopups();
       })
-      .catch(console.error)
+      .catch(err => {
+        console.log(err);
+        handleNotification({ message: errorHandler(err), isCorrect: false });
+      })
       .finally(() => {
         setIsLoading(false);
       });
@@ -62,12 +77,16 @@ export default function App() {
     api
       .changeAvatar(avatar)
       .then((user) => {
+        handleNotification({ message: "Аватар обновлен", isCorrect: true });
         setCurrentUser(user);
       })
       .then(() => {
         closeAllPopups();
       })
-      .catch(console.error)
+      .catch(err => {
+        console.log(err);
+        handleNotification({ message: errorHandler(err), isCorrect: false });
+      })
       .finally(() => {
         setIsLoading(false);
       });
@@ -77,12 +96,16 @@ export default function App() {
     api
       .createCard({ name, link })
       .then((newCard) => {
+        handleNotification({ message: "Карточка добавлена", isCorrect: true });
         setCards([newCard, ...cards]);
       })
       .then(() => {
         closeAllPopups();
       })
-      .catch(console.error)
+      .catch(err => {
+        console.log(err);
+        handleNotification({ message: errorHandler(err), isCorrect: false });
+      })
       .finally(() => {
         setIsLoading(false);
       });
@@ -109,12 +132,16 @@ export default function App() {
     api
       .deleteCard(card._id)
       .then(() => {
+        handleNotification({ message: "Карточка удалена", isCorrect: true });
         setCards((state) => state.filter((c) => c._id !== card._id));
       })
       .then(() => {
         closeAllPopups();
       })
-      .catch(console.error)
+      .catch((err) => {
+        console.log(err);
+        handleNotification({ message: errorHandler(err), isCorrect: false });
+      })
       .finally(() => {
         setIsLoading(false);
       });
@@ -143,6 +170,36 @@ export default function App() {
     setIsEditAvatarPopupOpen(false);
     setIsImagePopupOpen(false);
     setIsConfirmPopupOpen(false);
+  }
+
+  function handleNotificationClose() {
+    setIsNotificationOpen(false);
+    clearTimeout(timerId);
+    setTimerId("");
+  }
+
+  function onNotificationOpen() {
+    setIsNotificationOpen(true);
+
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+
+    setTimerId(
+      setTimeout(() => {
+        setIsNotificationOpen(false);
+        setTimerId("");
+      }, 3000)
+    );
+  }
+
+  function handleNotification({ message, isCorrect }) {
+    onNotificationOpen();
+    setNotificationSettings({
+      ...notificationSettings,
+      correct: isCorrect,
+      message,
+    });
   }
 
   return (
@@ -191,6 +248,12 @@ export default function App() {
           selectedCard={selectedCard}
         />
       </CurrentUserContext.Provider>
+      {isNotificationOpen && (
+        <UpdateDataNotification
+          onClose={handleNotificationClose}
+          settings={notificationSettings}
+        />
+      )}
     </>
   );
 }

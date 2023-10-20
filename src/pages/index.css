@@ -51,3 +51,11 @@
 @import url(../blocks/element/_type/element_type_skeleton.css);
 @import url(../blocks/hidden/hidden.css);
 @import url(../blocks/skeleton-animation/skeleton-animation.css);
+@import url(../blocks/notification/notification.css);
+@import url(../blocks/notification/_type/notitfication_type_correct.css);
+@import url(../blocks/notification/_type/notitfication_type_error.css);
+@import url(../blocks/notification/__title/notification__title.css);
+@import url(../blocks/notification/__text/notification__text.css);
+@import url(../blocks/notification/__close-button/notification__close-button.css);
+@import url(../blocks/notification/__close-button/_type/notification__close-button_type_correct.css);
+@import url(../blocks/notification/__close-button/_type/notification__close-button_type_error.css);
