@@ -11,11 +11,13 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
   const currentUser = useContext(CurrentUserContext);
   const nameValidation = useValidation({
     value: values["edit-title-input"],
-    validator: { type: "text", required: true, minLength: 2, maxLength: 30 },
+    type: "short-text",
+    required: true,
   });
   const aboutValidation = useValidation({
     value: values["edit-subtitle-input"],
-    validator: { type: "text", required: true, minLength: 2, maxLength: 200 },
+    type: "long-text",
+    required: true,
   });
   const isFormEnabled =
     !(nameValidation.isInputReseted && aboutValidation.isInputReseted) &&

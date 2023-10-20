@@ -1,99 +1,78 @@
 import { useEffect, useState, useCallback } from "react";
 
-export default function useValidation({ value, validator }) {
-  const [isValid, setIsValid] = useState(false);
-  const [isInputReseted, setIsInputReseted] = useState(true);
+export default function useValidation({ value, type, required }) {
   const [errorMesage, setErrorMesage] = useState("");
-  const [isEmpty, setIsEmpty] = useState(true);
-  const [isMinLengthError, setIsMinLengthError] = useState(false);
-  const [isMaxLengthError, setIsMaxLengthError] = useState(false);
-  const [isUrlError, setIsUrlError] = useState(false)
-  const urlRegex =
-    /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
+  const [isInputReseted, setIsInputReseted] = useState(true);
+  const [isValid, setIsValid] = useState(false);
+  const validator = {
+    url: {
+      urlRegex:
+        /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi,
+    },
+    "long-text": { minLength: 2, maxLength: 200 },
+    "short-text": { minLength: 2, maxLength: 30 },
+  };
 
   const checkIsEmpty = useCallback(() => {
-    if (value.length === 0 && validator.required) {
-      setIsEmpty(true);
+    if (required && !value.length) {
       setErrorMesage("Это поле обязательно для заполнения");
-    } else {
-      setIsEmpty(false);
+      return false;
     }
-  }, [value, validator]);
-
-  const checkMinLength = useCallback(() => {
-    if (value.length > 0 && value.length < validator.minLength) {
-      setIsMaxLengthError(true);
-      setErrorMesage(
-        `Минимальное количество символов: ${validator.minLength}. Сейчас: ${value.length}.`
-      );
-    } else {
-      setIsMaxLengthError(false);
-    }
-  }, [value, validator]);
+    return true;
+  }, [value]);
 
   const checkMaxLength = useCallback(() => {
-    if (value.length > validator.maxLength) {
-      setIsMinLengthError(true);
+    if (value.length > validator[type].maxLength) {
       setErrorMesage(
-        `Максимальное количество символов: ${validator.maxLength}. Сейчас: ${value.length}.`
+        `Максимальное количество символов: ${validator[type].maxLength}. Сейчас: ${value.length}.`
       );
-    } else {
-      setIsMinLengthError(false);
+      return false;
     }
-  }, [value, validator]);
+    return true;
+  }, [value]);
+
+  const checkMinLength = useCallback(() => {
+    if (!!value.length && value.length < validator[type].minLength) {
+      setErrorMesage(
+        `Минимальное количество символов: ${validator[type].minLength}. Сейчас: ${value.length}.`
+      );
+      return false;
+    }
+    return true;
+  }, [value]);
 
   const checkUrl = useCallback(() => {
-    if (value.length !== 0 && !value.match(urlRegex)) {
-      setIsUrlError(true)
-      setErrorMesage("Введите валидный url-адрес");
-    } else {
-      setIsUrlError(false)
+    if (!!value.length && !value.match(validator[type].urlRegex)) {
+      setErrorMesage("Введите валидный url-адрес.");
+      return false;
     }
+    return true;
   }, [value]);
 
   useEffect(() => {
-    if (validator.type === "text") {
-      checkIsEmpty();
-      checkMinLength();
-      checkMaxLength();
-
-      if (isEmpty || isMinLengthError || isMaxLengthError) {
-        setIsValid(false);
-      } else {
+    if (type === "long-text" || type === "short-text") {
+      if (checkIsEmpty() && checkMinLength() && checkMaxLength()) {
         setIsValid(true);
         setErrorMesage("");
+      } else {
+        setIsValid(false);
       }
     }
 
-    if (validator.type === "url") {
-      checkIsEmpty()
-      checkUrl();
-
-      if (isEmpty || isUrlError) {
-        setIsValid(false);
-      } else {
+    if (type === "url") {
+      if (checkIsEmpty() && checkUrl()) {
         setIsValid(true);
         setErrorMesage("");
+      } else {
+        setIsValid(false);
       }
     }
-  }, [
-    checkIsEmpty,
-    checkMinLength,
-    checkMaxLength,
-    checkUrl,
-    isEmpty,
-    isMinLengthError,
-    isMaxLengthError,
-    urlRegex,
-    isUrlError,
-    validator,
-    value,
-  ]);
+  }, [value]);
 
   return {
     isValid,
     errorMesage,
-    isInputReseted,
     setIsInputReseted,
+    isInputReseted,
   };
 }

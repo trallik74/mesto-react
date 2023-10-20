@@ -7,7 +7,8 @@ export default function ChangeAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
   const [urlValue, setUrlValue] = useState("");
   const urlValidation = useValidation({
     value: urlValue,
-    validator: { type: "url", required: true },
+    type: "url",
+    required: true,
   });
 
   useEffect(() => {

@@ -9,11 +9,13 @@ export default function AddCardPopup({ isOpen, onClose, onAddPlaceSubmit }) {
   });
   const titleValidation = useValidation({
     value: values["add-title-input"],
-    validator: { type: "text", required: true, minLength: 2, maxLength: 30 },
+    type: "short-text",
+    required: true,
   });
   const urlValidation = useValidation({
     value: values["add-url-input"],
-    validator: { type: "url", required: true },
+    type: "url",
+    required: true,
   });
   const isFormEnabled =
     !(titleValidation.isInputReseted && urlValidation.isInputReseted) &&
